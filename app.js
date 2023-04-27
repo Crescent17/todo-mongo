@@ -46,17 +46,24 @@ app.get("/", function (req, res) {
 );
 
 app.post("/", function (req, res) {
-
-    const item = req.body.newItem;
-
-    if (req.body.list === "Work") {
-        workItems.push(item);
-        res.redirect("/work");
-    } else {
-        items.push(item);
-        res.redirect("/");
-    }
+    const itemName = req.body.newItem;
+    const newItem = new Item({
+        name: itemName
+    })
+    newItem.save()
+    res.redirect("/")
 });
+
+app.post("/delete", function (req, res) {
+    Item.findByIdAndDelete(req.body.checkbox).then(result => {
+        if (result) {
+            console.log('The item was deleted successfully')
+        } else {
+            console.log('There was a problem deleting this item')
+        }
+        res.redirect("/")
+    })
+})
 
 app.get("/work", function (req, res) {
     res.render("list", {listTitle: "Work List", newListItems: workItems});
