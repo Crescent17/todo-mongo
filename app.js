@@ -17,29 +17,12 @@ const itemsSchema = mongoose.Schema({
     }
 })
 const Item = mongoose.model("Item", itemsSchema);
-
-const computer = new Item({
-    name: 'Computer'
-})
-const mouse = new Item({
-    name: 'Mouse'
-})
-const keyboard = new Item({
-    name: 'Keyboard'
-})
-const defaultItems = [computer, mouse, keyboard];
-Item.insertMany(defaultItems).then(res => {
-    if (res) {
-        console.log('Items were successfully added');
-    } else {
-        console.log('Something went wrong adding items to list')
-    }
-    mongoose.connection.close()
-});
 app.get("/", function (req, res) {
+    Item.find().then(list => {
+        res.render("list", {listTitle: "Today", newListItems: list});
+        mongoose.connection.close()
+    })
 
-
-    res.render("list", {listTitle: "Today", newListItems: items});
 
 });
 
