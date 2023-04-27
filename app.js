@@ -86,12 +86,12 @@ app.post("/delete", function (req, res) {
                 items: {_id: itemId}
             }
         }).then(() => {
-            res.redirect(`/${listTitle}`)
+            res.redirect(`/lists/${listTitle}`)
         });
     }
 })
 
-app.get("/:customListName", function (req, res) {
+app.get("/lists/:customListName", function (req, res) {
     const customListName = _.capitalize(req.params.customListName);
     List.findOne({name: customListName}).then(result => {
         if (!result) {
