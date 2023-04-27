@@ -60,12 +60,17 @@ app.post("/", function (req, res) {
     const newItem = new Item({
         name: itemName
     })
-    newItem.save()
-    List.findOne({name: listName}).then(list => {
-        list.items.push(newItem)
-        list.save()
-    })
-    res.redirect(`/${listName}`)
+    if (listName === 'All Items') {
+        newItem.save()
+        res.redirect("/")
+    } else {
+        List.findOne({name: listName}).then(list => {
+            list.items.push(newItem)
+            list.save()
+            res.redirect(`/lists/${listName}`)
+        })
+    }
+
 });
 
 app.post("/delete", function (req, res) {
