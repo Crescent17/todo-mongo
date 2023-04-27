@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-
+const _ = require("lodash")
 const app = express();
 
 mongoose.connect("mongodb://127.0.0.1:27017/todolistDB")
@@ -69,18 +69,30 @@ app.post("/", function (req, res) {
 });
 
 app.post("/delete", function (req, res) {
-    Item.findByIdAndDelete(req.body.checkbox).then(result => {
-        if (result) {
-            console.log('The item was deleted successfully')
-        } else {
-            console.log('There was a problem deleting this item')
-        }
-        res.redirect("/")
-    })
+    const itemId = req.body.checkbox;
+    const listTitle = req.body.listTitle;
+    if (listTitle === 'All Items') {
+        Item.findByIdAndDelete(itemId).then(result => {
+            if (result) {
+                console.log('The item was deleted successfully')
+            } else {
+                console.log('There was a problem deleting this item')
+            }
+            res.redirect(`/`)
+        })
+    } else {
+        List.findOneAndUpdate({name: listTitle}, {
+            $pull: {
+                items: {_id: itemId}
+            }
+        }).then(() => {
+            res.redirect(`/${listTitle}`)
+        });
+    }
 })
 
 app.get("/:customListName", function (req, res) {
-    const customListName = req.params.customListName.toLowerCase();
+    const customListName = _.capitalize(req.params.customListName);
     List.findOne({name: customListName}).then(result => {
         if (!result) {
             const list = new List({
