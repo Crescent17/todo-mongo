@@ -1,9 +1,6 @@
-//jshint esversion:6
-
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const date = require(__dirname + "/date.js");
 
 const app = express();
 
@@ -21,6 +18,24 @@ const itemsSchema = mongoose.Schema({
 })
 const Item = mongoose.model("Item", itemsSchema);
 
+const computer = new Item({
+    name: 'Computer'
+})
+const mouse = new Item({
+    name: 'Mouse'
+})
+const keyboard = new Item({
+    name: 'Keyboard'
+})
+const defaultItems = [computer, mouse, keyboard];
+Item.insertMany(defaultItems).then(res => {
+    if (res) {
+        console.log('Items were successfully added');
+    } else {
+        console.log('Something went wrong adding items to list')
+    }
+    mongoose.connection.close()
+});
 app.get("/", function (req, res) {
 
 
